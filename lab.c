@@ -1,5 +1,7 @@
-#include <raylib.h>
+#include "raylib.h"
+#include "raylib.h"
 #include <math.h>
+#include <stdio.h>
 
 int main(){
 
@@ -8,7 +10,7 @@ int main(){
 
     //Load our model and shader
     Model model = LoadModel("./teapot.obj");
-    Shader shader = LoadShader(0, TextFormat("./light.fs", 330));
+    Shader shader = LoadShader("./vetex.vs","./light.fs");
 
     //assign the shader to the model
     model.materials[0].shader = shader;
@@ -17,11 +19,15 @@ int main(){
 
     //Setup the camer position, look vector, upvector, projection type, and fov
     Camera cam = {0};
-    cam.position = (Vector3){3.5f, 3.5f, 3.5f};
+    cam.position = (Vector3){10.5f, 10.5f, 10.5f};
     cam.target = (Vector3){0.0f,0.0f,0.0f};
     cam.up = (Vector3){0.0f,1.0f,0.0f};
     cam.fovy = 90.0f;
     cam.projection = CAMERA_PERSPECTIVE;
+
+    Vector3 viewPos = cam.position;
+    int viewPosLoc = GetShaderLocation(shader, "viewPos");
+    SetShaderValue(shader, viewPosLoc, &viewPos, SHADER_UNIFORM_VEC3);
 
     Vector3 pos = {0.0f, 0.0f, 0.0f};
     //BoundingBox bounds = GetMeshBoundingBox(model.meshes[0]);
@@ -36,6 +42,8 @@ int main(){
     while(!WindowShouldClose()){
 
     UpdateCamera(&cam, CAMERA_THIRD_PERSON);
+    viewPos = cam.position;
+    SetShaderValue(shader, viewPosLoc, &viewPos, SHADER_UNIFORM_VEC3);
 
         BeginDrawing();
             ClearBackground(RAYWHITE);
@@ -43,12 +51,15 @@ int main(){
                 DrawModel(model, pos, 1.0f, GRAY);
                 DrawGrid(20, 10.0f);
             EndMode3D();
-            DrawText("Loading obj file", 10, GetScreenHeight()-20, 35, DARKGRAY);
+            DrawText("Phong Shading with Raylib - Seth Blankenship - CSE 3541", 15, GetScreenHeight()-50, 25, DARKGRAY);
+            DrawText("Controls: \n \n Arrow Keys to Orbit \n \n Mouse Wheel to Zoom", 15, GetScreenHeight()-400, 25, DARKGRAY);
         EndDrawing();
     }
+
 
 // UnloadTexture(tex);
 //Unload Model and then close up
     UnloadModel(model);
+    UnloadShader(shader);
     CloseWindow();
 }

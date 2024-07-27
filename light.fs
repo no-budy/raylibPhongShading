@@ -1,44 +1,46 @@
-precision lowp float;
+#version 330
 
-varying vec4 v_normal;
+// Input vertex attributes (from vertex shader)
+in vec2 fragTexCoord;
+in vec4 fragColor;
+in vec3 fragNormal;
 
-in vec3 normalIN;
+// Input uniform values
+uniform sampler2D texture0;
+uniform vec4 colDiffuse;
+uniform vec3 viewPos;
 
-void main() {
-  // ambient lighting (global illuminance)
-  vec3 ambient = vec3(0.5, 0.5, 0.5); // color - grey
+// Output fragment color
+out vec4 finalColor;
 
-  // diffuse (lambertian) lighting
-  // lightColor, lightSource, normal, diffuseStrength
-  //vec3 normal = normalize(v_normal.xyz);
-  vec3 normal = normalize(normalIN);
-  vec3 lightColor = vec3(1.0, 1.0, 1.0); // color - white
-  vec3 lightSource = vec3(1.0, 1.0, 1.0); // coord - (1, 0, 0)
+// NOTE: Add here your custom variables
+
+void main()
+{
+    // Texel color fetching from texture sampler
+    vec4 texelColor = texture(texture0, fragTexCoord);
+
+    // NOTE: Implement here your fragment shader code
+
+    vec3 ambientLight = vec3(0.5, 0.5, 0.5);
+
+    vec3 viewDirection = normalize(viewPos);
+
+    //diffuse lambertian
+    vec3 normal = normalize(fragNormal);
+    vec3 lightColor = vec3(1.0,1.0,1.0);
+    vec3 lightPos = vec3(1.0,0.0,0.0);
+    float diffuseVal = max(0.0, dot(normal,normalize(lightPos)));
+    vec3 diffuse = diffuseVal * lightColor;
 
 
-  float diffuseStrength = max(0.0, dot(lightSource, normal));
-  vec3 diffuse = diffuseStrength * lightColor;
+    //Specular
+    vec3 reflectSource = normalize(reflect(-lightPos, normal));
+    float specStrength = max(0.0, dot(viewDirection, reflectSource));
+    specStrength = pow(specStrength, 64);
+    vec3 spec = specStrength * lightColor;
 
-  // specular light
-  // lightColor, lightSource, normal, specularStrength, viewSource
-  vec3 cameraSource = vec3(0.0, 0.0, 1.0);
-  vec3 viewSource = normalize(cameraSource);
-  vec3 reflectSource = normalize(reflect(-lightSource, normal));
-  float specularStrength = max(0.0, dot(viewSource, reflectSource));
-  specularStrength = pow(specularStrength, 256.0);
-  vec3 specular = specularStrength * lightColor;
 
-  // lighting = ambient + diffuse + specular
-  vec3 lighting = vec3(0.0, 0.0, 0.0); // color - black
-  // lighting = ambient;
-  // lighting = ambient * 0.0 + diffuse;
-  // lighting = ambient * 0.0 + diffuse * 0.0 + specular;
-  lighting = ambient * 0.5 + diffuse * 0.5 + specular * 0.5;
-
-  // color = modelColor * lighting
-  vec3 modelColor = vec3(0.75, 0.75, 0.75);
-  vec3 color = modelColor * lighting;
-  vec3 base = vec3(1.0,1.0,1.0);
-
-  gl_FragColor = vec4(color, 1.0);
+    vec3 shading = spec  + diffuse * 0.5 + ambientLight * 0.6 ;
+    finalColor = vec4(texelColor.rgb * shading, 1.0);
 }
