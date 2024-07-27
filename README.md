@@ -1,2 +1,3 @@
-# raylibPhongShading
-my repo for lab 6 
+# Phong Shading for Lab 6 - CSE 3541
+
+This is a simple implementation of Phong Shading as a Lab for Computer animation CSE 3451
