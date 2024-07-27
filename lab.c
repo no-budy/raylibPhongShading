@@ -9,8 +9,8 @@ int main(){
 
 
     //Load our model and shader
-    Model model = LoadModel("./teapot.obj");
-    Shader shader = LoadShader("./vetex.vs","./light.fs");
+    Model model = LoadModel("./model/teapot.obj");
+    Shader shader = LoadShader("./shaders/vetex.vs","./shaders/light.fs");
 
     //assign the shader to the model
     model.materials[0].shader = shader;
@@ -52,7 +52,7 @@ int main(){
                 DrawGrid(20, 10.0f);
             EndMode3D();
             DrawText("Phong Shading with Raylib - Seth Blankenship - CSE 3541", 15, GetScreenHeight()-50, 25, DARKGRAY);
-            DrawText("Controls: \n \n Arrow Keys to Orbit \n \n Mouse Wheel to Zoom", 15, GetScreenHeight()-400, 25, DARKGRAY);
+            DrawText("Controls: \n \n Arrow Keys to Orbit \n \n Mouse Wheel to Zoom \n \n ESC to exit", 15, GetScreenHeight()-400, 25, DARKGRAY);
         EndDrawing();
     }
 
