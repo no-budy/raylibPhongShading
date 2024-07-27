@@ -10,4 +10,18 @@ First make sure that you have the following dependencies
 
 - raylib
 - OpenGL
--  
+- X11
+
+#### Clone the repo
+
+``` 
+git clone https://github.com/no-budy/raylibPhongShading.git
+```
+
+
+#### Run make
+
+``` 
+cd raylibPhongShading
+make
+```
